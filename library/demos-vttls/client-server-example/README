@@ -1,0 +1,24 @@
+Simple client and server vtTLS command-line applications
+
+Installation:
+make clean
+make
+
+Server arguments:
+server <port> 
+
+Client arguments:
+client <ip> <port> <file-to-download> <file-to-save>
+
+Example:
+./server 2000
+./client 127.0.0.1 2000 files/Tux.png MyTux.png
+
+Available files:
+- test100k.txt --- 100KB text file with random chars
+- test1m.txt   --- 1MB text file with random chars
+- test10m.txt  --- 10MB text file with random chars
+
+--
+2016    Andre' Joaquim
+2017-11 Miguel Pardal

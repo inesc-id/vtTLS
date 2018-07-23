@@ -1,0 +1,66 @@
+#!/bin/bash
+
+port="$2"
+nChannels="$3"
+cert="/home/debian/Documents/SOCAT/server.pem"
+cafile="/home/debian/Documents/SOCAT/client.crt"
+
+ccert="/home/debian/Documents/SOCAT/client.pem"
+ccafile="/home/debian/Documents/SOCAT/server.crt"
+
+case "$1" in 
+-s)
+	i=1
+	while [ $i -le $nChannels ]
+	do
+		auxport=$(($port - $nChannels -1 + $i))
+		nameTun="tun$i"
+		ipTun="192.168.$i.1"
+
+		echo "$ipTun" 
+		socat openssl-listen:$auxport,reuseaddr,cert=$cert,cafile=$cafile TUN:$ipTun/24,tun-name=$nameTun,up &
+		channel1_pid=$!
+		echo "$channel1_pid"
+		i=$(($i + 1))
+		#sleep 1
+	done
+
+	socat tcp-listen:$port,reuseaddr echo &
+	communication_pid=$!
+	echo "$communication1_pid"
+	;;
+-c)
+		i=1
+		lastTun="192.168.$nChannels.1"
+		while [ $i -le $nChannels ]
+		do
+			ipServer="$4"
+			auxport=$(($port - $nChannels -1 + $i))
+			nameTun="tun$i"
+			ipTun="192.168.$i.2"
+			j=$(($i -1))
+			auxIpTun="192.168.$j.1"
+ 
+			if [ "$i" -eq "1" ]
+			then
+				socat openssl-connect:$ipServer:$auxport,reuseaddr,cert=$ccert,cafile=$ccafile TUN:$ipTun/24,tun-name=$nameTun,up &
+				#channel1_pid=$!
+				#echo "$channel1_pid"
+			else
+				socat openssl-connect:$auxIpTun:$auxport,reuseaddr,cert=$ccert,cafile=$ccafile TUN:$ipTun/24,tun-name=$nameTun,up &
+				#channel1_pid=$!
+				#echo "$channel1_pid"
+			fi
+			i=$(($i + 1))
+			sleep 1
+		done
+		
+		socat stdio tcp:$lastTun:$port
+		#communication_pid=$!
+		#echo "$communication1_pid"
+		;;
+*)
+	echo "DEFAULT"
+	;;
+esac
+

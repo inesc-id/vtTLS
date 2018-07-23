@@ -1,2 +1,30 @@
-# vtTLS
-SafeCloud vulnerability-tolerant channels. The SafeCloud project developed security solutions intended to be secure even against powerful, motivated and well-funded adversaries.
+# vtTLS - vulnerability-tolerant Transport Layer Security.
+
+vtTLS stands for vulnerability-tolerant Transport Layer Security.
+
+
+## vtTLS Library
+
+An implementation of the OpenSSL protocol with redundant channels to mask vulnerabilities.
+
+## MultiTLS - vtTLS Tool
+
+MultiTLS adds two layers of encryption so that the communication is secure even if a vulnerability is found in one of the layers. It does so using a tunneling approach that allows using multiple layers of encryption without modifying existing applications.
+
+
+## Authors
+
+* **André Joaquim** - *Development of the vtTLS library* - [GitHub](https://github.com/AndreJoaquim)
+* **Ricardo Moura** - *Development of MultiTLS - the vtTLS tool* - [GitHub](https://github.com/R3Moura)
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE.md) file for details
+
+## Acknowledgments
+
+* [**André Joaquim**](https://github.com/AndreJoaquim)
+* [**Ricardo Moura**](https://github.com/R3Moura)
+* [**David Matos**](https://github.com/davidmatos)
+* [**Prof. Miguel Pardal**](https://github.com/miguelpardal)
+* [**Prof. Miguel Correia**](https://github.com/mpcorreia)

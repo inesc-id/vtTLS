@@ -1,0 +1,146 @@
+#!/bin/bash
+
+certS0="/home/rmoura/Documents/Certs/1ServerECDSA.pem"
+cafileS0="/home/rmoura/Documents/Certs/1ClientECDSA.crt"
+certC0="/home/rmoura/Documents/Certs/1ClientECDSA.pem"
+cafileC0="/home/rmoura/Documents/Certs/1ServerECDSA.crt"
+cipher0="ECDHE-ECDSA-CHACHA20-POLY1305"
+
+certS1="/home/rmoura/Documents/Certs/2ServerRSA.pem"
+cafileS1="/home/rmoura/Documents/Certs/2ClientRSA.crt"
+certC1="/home/rmoura/Documents/Certs/2ClientRSA.pem"
+cafileC1="/home/rmoura/Documents/Certs/2ServerRSA.crt"
+cipher1="AES128-CCM8"
+
+certS2="/home/rmoura/Documents/Certs/3ServerDSA.pem"
+cafileS2="/home/rmoura/Documents/Certs/3ClientDSA.crt"
+certC2="/home/rmoura/Documents/Certs/3ClientDSA.pem"
+cafileC2="/home/rmoura/Documents/Certs/3ServerDSA.crt"
+cipher2="DHE-DSS-CAMELLIA256-SHA256"
+
+certS3="/home/rmoura/Documents/Certs/4ServerRSA.pem"
+cafileS3="/home/rmoura/Documents/Certs/4ClientRSA.crt"
+certC3="/home/rmoura/Documents/Certs/4ClientRSA.pem"
+cafileC3="/home/rmoura/Documents/Certs/4ServerRSA.crt"
+cipher3="ECDHE-RSA-AES256-GCM-SHA384"
+
+case "$1" in
+-s)
+
+	if (( "$#" != "3" ))
+	then
+		echo "Usage: $0 $1 <Port> <TunnelsNumber>" >&2
+		exit 1
+	fi
+
+	port="$2"
+	nTunnels="$3"
+
+	i=0
+	while (( $i < $nTunnels ))
+	do
+
+		j=$(($i + 1))
+		rest=$(( $i % 4 ))
+
+		#connection option
+		auxPort=$(($port - $nTunnels + $j))
+
+		#openSSL --- options for socat
+		auxCert=certS$rest
+		auxCafile=cafileS$rest
+		auxCipher=cipher$rest
+
+		#TUN --- options for socat
+		nameTun="tun$j"
+		ipTun="10.$j.1.1"
+
+		#socat command
+		cmdSSLserver=openssl-listen:$auxPort,reuseaddr,cert=${!auxCert},cafile=${!auxCafile},cipher=${!auxCipher}
+		cmdTUNserver=TUN:$ipTun/24,tun-name=$nameTun,up
+		socat -d -d -d $cmdSSLserver $cmdTUNserver &
+
+		#tunnel_pid=$!
+		#echo "$tunnel_pid"
+
+		i=$(($i + 1))
+		sleep 1
+	done
+	;;
+
+-c)
+
+	if (( "$#" != "4" ))
+	then
+		echo "Usage: $0 $1 <Port> <TunnelsNumber> <IPserver>" >&2
+		exit 1
+	fi
+
+	port="$2"
+	nTunnels="$3"
+	ipServer="$4"
+
+	i=0
+	while (( $i < $nTunnels ))
+	do
+
+		j=$(($i + 1))
+		rest=$(( $i % 4 ))
+
+
+		#connection options
+		lastTUNserver="10.$i.1.1"
+		auxPort=$(($port - $nTunnels + $j))
+
+
+		#openSSL --- options for socat
+		auxCert=certC$rest
+		auxCafile=cafileC$rest
+		auxCipher=cipher$rest
+
+
+		#TUN --- options for socat
+		nameTun="tun$j"
+		ipTun="10.$j.1.2"
+
+		if [ "$i" -eq "0" ]
+		then
+			cmdSSL=openssl-connect:$ipServer:$auxPort,reuseaddr,cert=${!auxCert},cafile=${!auxCafile},cipher=${!auxCipher}
+		else
+			cmdSSL=openssl-connect:$lastTUNserver:$auxPort,reuseaddr,cert=${!auxCert},cafile=${!auxCafile},cipher=${!auxCipher}
+		fi
+
+		cmdTUN=TUN:$ipTun/24,tun-name=$nameTun,up
+		socat -d -d -d $cmdSSL $cmdTUN &
+
+		i=$(($i + 1))
+		sleep 1
+
+	done
+	;;
+-i)
+
+	wget https://www.openssl.org/source/openssl-1.1.0g.tar.gz --no-check-certificate
+	tar -zxvf openssl-1.1.0g.tar.gz
+	cd openssl-1.1.0g
+	./config # -Wl,--enable-new-dtags,-rpath,'$(LIBRPATH)'
+	make
+	make test
+	sudo make install
+	#ln -s libcrypto.so.1.1 libcrypto.so
+	#ln -s libssl.so.1.1 libssl.so
+	#sudo ldconfig
+
+	wget https://www.dest-unreach.org/socat/socat-1.7.3.2.tar.gz
+	tar -zxvf socat-1.7.3.2.tar.gz
+	cd socat-1.7.3.2
+	sudo ./configure
+	sudo make
+	sudo make install
+	;;
+
+*)
+	echo "Usage: $0 -s <Port> <TunnelsNumber>" >&2
+	echo "Usage: $0 -c <Port> <TunnelsNumber> <IPserver>" >&2
+	;;
+esac

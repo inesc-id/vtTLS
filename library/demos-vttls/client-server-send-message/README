@@ -1,0 +1,15 @@
+Simple client and server vtTLS command-line applications
+
+Installation:
+- make clean;
+- make
+
+Run server:
+- ./server (runs on localhost on port 1111)
+
+Run client:
+- ./client <server-ip> <message-to-send>
+
+--
+Andre' Joaquim | 2016
+Miguel Pardal | 2017
