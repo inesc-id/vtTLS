@@ -56,7 +56,7 @@ $ multiTLS -c <port-number> <number-of-tunnels> <IPServer> <cert-1> <cafile-1> <
 
 
 
-### MultiTLS simpe execution example
+### MultiTLS simple execution example
 
 In the server container with an IP address **192.169.1.1** execute: 
 
