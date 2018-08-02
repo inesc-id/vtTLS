@@ -3,13 +3,17 @@
 vtTLS stands for vulnerability-tolerant Transport Layer Security.
 
 
-## vtTLS Library
+## vtTLS Library - Modified OpenSSL
 
 An implementation of the OpenSSL protocol with redundant channels to mask vulnerabilities.
 
-## MultiTLS - vtTLS Tool
+[Source code](https://github.com/inesc-id/vtTLS/tree/master/library)
+
+## vtTLS Tool - MultiTLS 
 
 MultiTLS adds two layers of encryption so that the communication is secure even if a vulnerability is found in one of the layers. It does so using a tunneling approach that allows using multiple layers of encryption without modifying existing applications.
+
+[Source code](https://github.com/inesc-id/vtTLS/tree/master/tool)
 
 
 ## Authors
