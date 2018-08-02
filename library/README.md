@@ -1,10 +1,18 @@
-
 # vtTLS - Library
 
-## Vulnerability-tolerant Channels Docker Instructions
+VTTLS is a diverse and redundant vulnerability-tolerant communication protocol. There are often con- cerns about the strength of some of the encryption mechanisms used in SSL/TLS channels, with some regarded as insecure at some point in time. These mechanisms play a massive role in network se- curity, including cloud computing and infrastructures. VTTLS is our solution to mitigate the problem of secure communication channels being vulnerable to attacks due to unexpected vulnerabilities in its mechanisms. It is based on diversity and redundancy of cryptographic mechanisms and certificates to ensure a secure communication even when one or more mechanisms are vulnerable. VTTLS relies on a combination of k cipher suites which ensure that even if `k − 1` cipher suites are insecure or vulnerable, the communication channel remains secure due to the remaining secure cipher suite. We evaluated the performance and cost of VTTLS by comparing it to a recent TLS implementation, OpenSSL.
+
+## Running an example application using Docker
 
 This document describes the steps to install a container (lightweight virtual machine) with the VT-TLS (Vulnerability Tolerant Transport Layer Security) protocol implementation which will enable a vulnerability-tolerant channel test between two peers. We use Docker to create a virtual machine with the code and the examples.
-Creating a Docker container with vtTLS
+
+
+
+### Prerequisites
+
+You need Docker to run this example
+
+### Instructions
 
 To create a Docker container with vtTLS, execute the following command from within the VT-TLS folder:
 
@@ -127,3 +135,24 @@ Server second certificate:
 ```
 
 This concludes the vtTLS demonstration using Docker containers.
+
+
+
+## Built With
+
+* [Docker](http://docker.com/)
+* [OpenSSL](https://www.openssl.org/)
+
+## Authors
+
+* **André Joaquim** - *Development of the library* - [GitHub](https://github.com/AndreJoaquim)
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
+
+## Acknowledgments
+
+* [**David Matos**](https://github.com/davidmatos)
+* [**Prof. Miguel Pardal**](https://github.com/miguelpardal)
+* [**Prof. Miguel Correia**](https://github.com/mpcorreia)
